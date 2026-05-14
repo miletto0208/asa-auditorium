@@ -519,15 +519,7 @@ function checkConflict(excludeId){
 }
 function checkConflictAndWarn(){document.getElementById('conflict-warning').style.display=checkConflict(editingEventId)?'block':'none';}
 ['ev-data','ev-inicio','ev-fim'].forEach(id=>document.getElementById(id).addEventListener('change',checkConflictAndWarn));
-document.getElementById('ev-data').addEventListener('change',function(){
-  if(document.getElementById('ev-limpeza-data').value)return;
-  const v=this.value;if(!v)return;
-  const[y,m,d]=v.split('-').map(Number);
-  const dt=new Date(y,m-1,d);dt.setDate(dt.getDate()-1);
-  const yy=dt.getFullYear(),mm=String(dt.getMonth()+1).padStart(2,'0'),dd=String(dt.getDate()).padStart(2,'0');
-  document.getElementById('ev-limpeza-data').value=yy+'-'+mm+'-'+dd;
-  document.getElementById('ev-limpeza-hora').value='08:00';
-});
+document.getElementById('ev-data').addEventListener('change',checkConflictAndWarn);
 function openNewEvent(){
   editingEventId=null;
   document.getElementById('modal-event-title').textContent='Novo Evento';
@@ -536,11 +528,6 @@ function openNewEvent(){
 }
 function openNewEventOnDate(dateStr){
   openNewEvent();document.getElementById('ev-data').value=dateStr;
-  const[y,m,d]=dateStr.split('-').map(Number);
-  const dt=new Date(y,m-1,d);dt.setDate(dt.getDate()-1);
-  const yy=dt.getFullYear(),mm=String(dt.getMonth()+1).padStart(2,'0'),dd=String(dt.getDate()).padStart(2,'0');
-  document.getElementById('ev-limpeza-data').value=yy+'-'+mm+'-'+dd;
-  document.getElementById('ev-limpeza-hora').value='08:00';
 }
 function clearForm(){
   ['ev-nome','ev-cliente','ev-data','ev-inicio','ev-fim','ev-limpeza-data','ev-limpeza-hora','ev-obs','ev-som-empresa'].forEach(id=>document.getElementById(id).value='');
