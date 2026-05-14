@@ -72,7 +72,7 @@ main{max-width:1200px;margin:0 auto;padding:36px 40px;}
 .chip-atrium{background:rgba(122,90,160,0.12);color:var(--atrium);border-left:3px solid var(--atrium);}
 .chip-copa{background:rgba(42,122,106,0.12);color:var(--copa);border-left:3px solid var(--copa);}
 .chip-limpeza{background:rgba(138,106,58,0.1);color:var(--limpeza);border-left:3px dashed var(--limpeza);}
-.chip-pre{background:rgba(184,134,11,0.1);color:var(--pre);border-left:3px dashed var(--pre);opacity:0.85;}
+.chip-pre{background:#3A3A3A;color:#FFFFFF;border-left:3px solid #000;opacity:1;font-weight:600;}
 .modal-overlay{position:fixed;inset:0;background:rgba(40,35,30,0.5);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--bg2);border:1px solid var(--border);width:100%;max-width:580px;max-height:90vh;overflow-y:auto;animation:slideUp 0.22s ease;box-shadow:0 16px 48px rgba(0,0,0,0.14);}
@@ -130,11 +130,11 @@ textarea{resize:vertical;min-height:72px;}
 .badge-vip{background:rgba(160,74,58,0.12);color:var(--vip);}
 .badge-atrium{background:rgba(122,90,160,0.12);color:var(--atrium);}
 .badge-copa{background:rgba(42,122,106,0.12);color:var(--copa);}
-.badge-pre{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;font-size:12px;font-weight:600;border-radius:3px;background:rgba(184,134,11,0.1);color:var(--pre);border:1px dashed rgba(184,134,11,0.4);}
+.badge-pre{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;font-size:12px;font-weight:600;border-radius:3px;background:#3A3A3A;color:#FFFFFF;border:1px solid #000;}
 .events-list{display:flex;flex-direction:column;gap:2px;}
 .event-row{background:var(--bg2);border:1px solid var(--border);padding:14px 18px;display:grid;grid-template-columns:110px 1fr 200px 150px 80px;align-items:center;gap:14px;cursor:pointer;transition:all 0.15s;}
 .event-row:hover{background:var(--gold-pale);border-color:var(--gold);}
-.event-row.row-pre{border-left:3px dashed var(--pre);opacity:0.88;}
+.event-row.row-pre{border-left:4px solid #3A3A3A;background:#F0EFED;}
 .event-row.row-limpeza{border-left:3px solid var(--limpeza);}
 .event-date-col{font-size:12px;color:var(--text3);}
 .event-date-col strong{display:block;color:var(--text);font-size:14px;margin-bottom:1px;}
@@ -489,8 +489,11 @@ function checkConflictAndWarn(){document.getElementById('conflict-warning').styl
 ['ev-data','ev-inicio','ev-fim'].forEach(id=>document.getElementById(id).addEventListener('change',checkConflictAndWarn));
 document.getElementById('ev-data').addEventListener('change',function(){
   if(document.getElementById('ev-limpeza-data').value)return;
-  const d=new Date(this.value+'T12:00:00');d.setDate(d.getDate()-1);
-  document.getElementById('ev-limpeza-data').value=d.toISOString().split('T')[0];
+  const v=this.value;if(!v)return;
+  const[y,m,d]=v.split('-').map(Number);
+  const dt=new Date(y,m-1,d);dt.setDate(dt.getDate()-1);
+  const yy=dt.getFullYear(),mm=String(dt.getMonth()+1).padStart(2,'0'),dd=String(dt.getDate()).padStart(2,'0');
+  document.getElementById('ev-limpeza-data').value=yy+'-'+mm+'-'+dd;
   document.getElementById('ev-limpeza-hora').value='08:00';
 });
 function openNewEvent(){
@@ -501,8 +504,10 @@ function openNewEvent(){
 }
 function openNewEventOnDate(dateStr){
   openNewEvent();document.getElementById('ev-data').value=dateStr;
-  const d=new Date(dateStr+'T12:00:00');d.setDate(d.getDate()-1);
-  document.getElementById('ev-limpeza-data').value=d.toISOString().split('T')[0];
+  const[y,m,d]=dateStr.split('-').map(Number);
+  const dt=new Date(y,m-1,d);dt.setDate(dt.getDate()-1);
+  const yy=dt.getFullYear(),mm=String(dt.getMonth()+1).padStart(2,'0'),dd=String(dt.getDate()).padStart(2,'0');
+  document.getElementById('ev-limpeza-data').value=yy+'-'+mm+'-'+dd;
   document.getElementById('ev-limpeza-hora').value='08:00';
 }
 function clearForm(){
@@ -571,11 +576,11 @@ function showDetail(id){
   const somLabel=ev.som==='juan'?'Som do Juan':ev.som==='ext'?'Empresa Externa'+(ev.som_empresa?': '+ev.som_empresa:''):'Sem Som';
   const staffLabel=ev.limpeza_staff&&ev.limpeza_staff.length?ev.limpeza_staff.map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(', '):'--';
   let html='';
-  if(isPre)html+='<div class="detail-section"><div style="background:rgba(184,134,11,0.1);border:1px dashed rgba(184,134,11,0.4);padding:8px 12px;font-size:13px;color:var(--pre)">Pre-agendamento — contrato ainda nao fechado</div></div>';
+  if(isPre)html+='<div class="detail-section"><div style="background:#3A3A3A;border:1px solid #000;padding:8px 12px;font-size:13px;color:#FFFFFF">Pre-agendamento — contrato ainda nao fechado</div></div>';
   if(ev.cliente)html+='<div class="detail-section"><div class="detail-label">Cliente / Responsavel</div><div class="detail-value">'+ev.cliente+'</div></div>';
   if(!isLimpeza&&espacos.length)html+='<div class="detail-section"><div class="detail-label">Espacos</div><div class="space-badges">'+espacos.map(s=>'<span class="space-badge badge-'+s+'">'+(SPACE_NAMES[s]||s)+'</span>').join('')+'</div></div>';
   html+='<div class="detail-section"><div class="detail-label">Data</div><div class="detail-value">'+dateFmt+'</div></div>';
-  html+='<div class="detail-section"><div class="detail-label">Horario</div><div class="detail-value">'+ev.inicio+' ate '+ev.fim+'</div></div>';
+  html+='<div class="detail-section"><div class="detail-label">Horario</div><div class="detail-value">'+((ev.inicio||'').slice(0,5))+' ate '+((ev.fim||'').slice(0,5))+'</div></div>';
   if(!isLimpeza)html+='<div class="detail-section"><div class="detail-label">Equipamento de Som</div><div class="detail-value">'+somLabel+'</div></div>';
   if(ev.limpeza_data)html+='<div class="detail-section"><div class="detail-label">Limpeza Agendada</div><div class="detail-value">'+new Date(ev.limpeza_data+'T12:00:00').toLocaleDateString('pt-BR')+' as '+(ev.limpeza_hora||'--:--')+' <span class="limpeza-tag">'+staffLabel+'</span></div></div>';
   if(ev.obs)html+='<div class="detail-section"><div class="detail-label">Observacoes</div><div class="detail-value">'+ev.obs+'</div></div>';
@@ -628,7 +633,7 @@ function buildCalCell(d,dateStr,isToday){
       if(n>=4)return;
       const chip=document.createElement('span');
       chip.className='event-chip chip-limpeza';
-      chip.textContent='Limpeza '+(ev.inicio||'');
+      chip.textContent='Limpeza '+((ev.inicio||'').slice(0,5));
       chip.onclick=e=>{e.stopPropagation();showDetail(ev.id);};
       cell.appendChild(chip);n++;return;
     }
@@ -636,7 +641,7 @@ function buildCalCell(d,dateStr,isToday){
       if(n>=3)return;
       const chip=document.createElement('span');
       chip.className='event-chip chip-'+s+(ev.status==='pre'?' chip-pre':'');
-      chip.textContent=(ev.status==='pre'?'~ ':'')+ev.inicio+' '+(ev.nome||ev.cliente||'');
+      chip.textContent=(ev.status==='pre'?'~ ':'')+((ev.inicio||'').slice(0,5))+' '+(ev.nome||ev.cliente||'');
       chip.onclick=e=>{e.stopPropagation();showDetail(ev.id);};
       cell.appendChild(chip);n++;
     });
@@ -646,7 +651,7 @@ function buildCalCell(d,dateStr,isToday){
     const chip=document.createElement('span');
     chip.className='event-chip chip-limpeza';
     const staff=ev.limpeza_staff&&ev.limpeza_staff.length?' - '+ev.limpeza_staff.map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(', '):'';
-    chip.textContent='Limpeza '+ev.limpeza_hora+staff;
+    chip.textContent='Limpeza '+((ev.limpeza_hora||'').slice(0,5))+staff;
     chip.onclick=e=>{e.stopPropagation();showDetail(ev.id);};
     cell.appendChild(chip);n++;
   });
@@ -681,7 +686,7 @@ function renderList(filter){
     const titulo=ev.nome&&ev.nome!=='Limpeza'?ev.nome:(ev.cliente?'Evento de '+ev.cliente:'Limpeza');
     const sub=ev.cliente&&ev.nome?ev.cliente:'';
     const rowClass='event-row'+(isPre?' row-pre':isLimpeza?' row-limpeza':'');
-    return '<div class="'+rowClass+'" onclick="showDetail(\''+ev.id+'\')"><div class="event-date-col"><strong>'+dateFmt+'</strong>'+weekday+'</div><div><div class="event-name">'+titulo+'</div>'+(sub?'<div class="event-sub">'+sub+'</div>':'')+'</div><div style="display:flex;flex-wrap:wrap;gap:4px">'+badges+'</div><div style="font-size:13px;color:var(--text2)">'+ev.inicio+' - '+ev.fim+'</div><div>'+statusTag+'</div></div>';
+    return '<div class="'+rowClass+'" onclick="showDetail(\''+ev.id+'\')"><div class="event-date-col"><strong>'+dateFmt+'</strong>'+weekday+'</div><div><div class="event-name">'+titulo+'</div>'+(sub?'<div class="event-sub">'+sub+'</div>':'')+'</div><div style="display:flex;flex-wrap:wrap;gap:4px">'+badges+'</div><div style="font-size:13px;color:var(--text2)">'+((ev.inicio||'').slice(0,5))+' - '+((ev.fim||'').slice(0,5))+'</div><div>'+statusTag+'</div></div>';
   }).join('');
 }
 function renderContracts(){
