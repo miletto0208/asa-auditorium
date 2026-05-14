@@ -422,12 +422,14 @@ function setSyncStatus(s){
   dot.className='sync-dot '+s;
   lbl.textContent={ok:'Conectado',syncing:'Salvando...',err:'Erro'}[s]||s;
 }
+function fmtT(v){return v?String(v).slice(0,5):'';}
+function fmtD(v){if(!v)return null;const s=String(v).slice(0,10);const p=s.split('-');if(p.length!==3||Number(p[0])<2000)return null;return s;}
 async function loadAll(){
   const[ev,ct]=await Promise.all([
     sb.from('eventos').select('*').order('data',{ascending:true}),
     sb.from('contratos').select('*').order('criado_em',{ascending:false})
   ]);
-  if(!ev.error)events=ev.data||[];
+  if(!ev.error)events=(ev.data||[]).map(e=>({...e,inicio:fmtT(e.inicio),fim:fmtT(e.fim),limpeza_data:fmtD(e.limpeza_data),limpeza_hora:fmtT(e.limpeza_hora)}));
   if(!ct.error)contracts=ct.data||[];
   document.getElementById('loading-overlay').style.display='none';
   renderCalendar();
@@ -598,8 +600,8 @@ function editFromDetail(){
   document.getElementById('ev-data').value=ev.data;
   document.getElementById('ev-inicio').value=ev.inicio;
   document.getElementById('ev-fim').value=ev.fim;
-  document.getElementById('ev-limpeza-data').value=ev.limpeza_data||'';
-  document.getElementById('ev-limpeza-hora').value=ev.limpeza_hora||'';
+  document.getElementById('ev-limpeza-data').value=fmtD(ev.limpeza_data)||'';
+  document.getElementById('ev-limpeza-hora').value=fmtT(ev.limpeza_hora);
   document.getElementById('ev-obs').value=ev.obs||'';
   setSpaces(ev.espacos||[]);selectSom(ev.som||'nao');
   if(ev.som_empresa)document.getElementById('ev-som-empresa').value=ev.som_empresa;
