@@ -190,35 +190,34 @@ textarea{resize:vertical;min-height:72px;}
 .event-section.hide{display:none;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg3);}::-webkit-scrollbar-thumb{background:var(--border2);}
 @media(max-width:768px){
-  header{padding:10px 14px;}
-  .logo img{height:32px;}
-  .header-right{gap:8px;}
-  .nav-btn{padding:6px 10px;font-size:12px;}
+  header{padding:10px 14px;overflow:hidden;}
+  .logo img{height:30px;}
+  .header-right{gap:6px;flex-shrink:0;}
+  .nav-btn{padding:5px 8px;font-size:11px;letter-spacing:0;}
   .sync-status{display:none;}
-  main{padding:14px;}
-  .page-header{flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:20px;}
+  main{padding:12px;overflow-x:hidden;}
+  .page-header{flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:16px;}
   .btn-primary{width:100%;justify-content:center;}
-  .cal-header{gap:10px;margin-bottom:12px;}
-  .cal-month{font-size:16px;min-width:unset;}
-  .legend{margin-left:0;gap:8px;}
+  .cal-header{gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+  .cal-month{font-size:15px;min-width:unset;}
+  .legend{margin-left:0;gap:6px;}
   .legend-item{font-size:10px;}
-  .cal-grid{font-size:10px;}
-  .cal-day{min-height:60px;padding:4px;}
-  .cal-day-label{padding:6px 0;font-size:9px;}
-  .day-num{font-size:10px;}
-  .event-chip{font-size:9px;padding:1px 4px;}
+  .cal-grid{width:100%;table-layout:fixed;overflow:hidden;}
+  .cal-day{min-height:55px;padding:3px;overflow:hidden;}
+  .cal-day-label{padding:5px 0;font-size:9px;letter-spacing:0;}
+  .day-num{font-size:10px;margin-bottom:2px;}
+  .event-chip{font-size:9px;padding:1px 3px;margin-bottom:1px;}
   .form-row{grid-template-columns:1fr;}
   .event-row{grid-template-columns:1fr;gap:5px;}
   .list-header{display:none;}
   .space-checks{grid-template-columns:1fr;}
   .som-options{flex-direction:column;}
   .status-opts{flex-direction:column;}
-  .modal{max-height:95vh;}
-  .modal-body{padding:16px;}
-  .modal-header{padding:16px;}
-  .modal-footer{padding:12px 16px;}
+  .modal-body{padding:14px;}
+  .modal-header{padding:14px;}
+  .modal-footer{padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));}
   .contract-grid{grid-template-columns:repeat(2,1fr);}
-  .page-title h2{font-size:22px;}
+  .page-title h2{font-size:20px;}
 }
 </style>
 </head>
@@ -321,56 +320,78 @@ textarea{resize:vertical;min-height:72px;}
         <div id="pre-hint" style="display:none;font-size:11px;color:var(--pre);margin-top:4px">Interesse confirmado, contrato ainda nao fechado</div>
       </div>
       <div class="conflict-warning" id="conflict-warning">Conflito de horario detectado neste periodo.</div>
-      <div class="event-section" id="ev-section-nome">
-        <div class="form-group"><label>Nome do Evento</label><input type="text" id="ev-nome" placeholder="Ex: Formatura Medicina 2025"></div>
-      </div>
-      <div class="form-group"><label>Cliente / Responsavel</label><input type="text" id="ev-cliente" placeholder="Ex: Ana Beatriz Costa"></div>
-      <div class="form-row">
-        <div class="form-group" style="margin-bottom:0"><label>Data *</label><input type="date" id="ev-data"></div>
-        <div class="form-group" style="margin-bottom:0"><label>Horario *</label>
-          <div style="display:flex;gap:8px;align-items:center">
-            <input type="time" id="ev-inicio" style="flex:1">
-            <span style="color:var(--text3);font-size:13px">-</span>
-            <input type="time" id="ev-fim" style="flex:1">
+
+      <!-- SECAO EVENTO (esconde quando So Limpeza) -->
+      <div id="ev-section-evento">
+        <div class="event-section" id="ev-section-nome">
+          <div class="form-group"><label>Nome do Evento</label><input type="text" id="ev-nome" placeholder="Ex: Formatura Medicina 2025"></div>
+        </div>
+        <div class="form-group"><label>Cliente / Responsavel</label><input type="text" id="ev-cliente" placeholder="Ex: Ana Beatriz Costa"></div>
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom:0"><label>Data *</label><input type="date" id="ev-data"></div>
+          <div class="form-group" style="margin-bottom:0"><label>Horario *</label>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="time" id="ev-inicio" style="flex:1">
+              <span style="color:var(--text3);font-size:13px">-</span>
+              <input type="time" id="ev-fim" style="flex:1">
+            </div>
           </div>
         </div>
-      </div>
-      <div class="event-section" id="ev-section-espacos">
-        <div class="form-divider" style="margin-top:20px"><span>Espacos utilizados</span></div>
-        <div class="form-group">
-          <div class="space-checks">
-            <div class="space-check-item s-magnificum" onclick="toggleSpace('magnificum',this)"><span class="space-dot" style="background:var(--magnificum)"></span><span class="check-label">Magnificum</span><span class="checkmark" style="color:var(--magnificum)">v</span></div>
-            <div class="space-check-item s-verbum" onclick="toggleSpace('verbum',this)"><span class="space-dot" style="background:var(--verbum)"></span><span class="check-label">Verbum</span><span class="checkmark" style="color:var(--verbum)">v</span></div>
-            <div class="space-check-item s-vip" onclick="toggleSpace('vip',this)"><span class="space-dot" style="background:var(--vip)"></span><span class="check-label">Sala VIP</span><span class="checkmark" style="color:var(--vip)">v</span></div>
-            <div class="space-check-item s-atrium" onclick="toggleSpace('atrium',this)"><span class="space-dot" style="background:var(--atrium)"></span><span class="check-label">Espaco Atrium</span><span class="checkmark" style="color:var(--atrium)">v</span></div>
-            <div class="space-check-item s-copa" onclick="toggleSpace('copa',this)"><span class="space-dot" style="background:var(--copa)"></span><span class="check-label">Copa</span><span class="checkmark" style="color:var(--copa)">v</span></div>
+        <div class="event-section" id="ev-section-espacos">
+          <div class="form-divider" style="margin-top:20px"><span>Espacos utilizados</span></div>
+          <div class="form-group">
+            <div class="space-checks">
+              <div class="space-check-item s-magnificum" onclick="toggleSpace('magnificum',this)"><span class="space-dot" style="background:var(--magnificum)"></span><span class="check-label">Magnificum</span><span class="checkmark" style="color:var(--magnificum)">v</span></div>
+              <div class="space-check-item s-verbum" onclick="toggleSpace('verbum',this)"><span class="space-dot" style="background:var(--verbum)"></span><span class="check-label">Verbum</span><span class="checkmark" style="color:var(--verbum)">v</span></div>
+              <div class="space-check-item s-vip" onclick="toggleSpace('vip',this)"><span class="space-dot" style="background:var(--vip)"></span><span class="check-label">Sala VIP</span><span class="checkmark" style="color:var(--vip)">v</span></div>
+              <div class="space-check-item s-atrium" onclick="toggleSpace('atrium',this)"><span class="space-dot" style="background:var(--atrium)"></span><span class="check-label">Espaco Atrium</span><span class="checkmark" style="color:var(--atrium)">v</span></div>
+              <div class="space-check-item s-copa" onclick="toggleSpace('copa',this)"><span class="space-dot" style="background:var(--copa)"></span><span class="check-label">Copa</span><span class="checkmark" style="color:var(--copa)">v</span></div>
+            </div>
+          </div>
+          <div class="form-divider"><span>Equipamento de Som</span></div>
+          <div class="form-group">
+            <div class="som-options">
+              <div class="som-opt" id="som-juan" onclick="selectSom('juan')">Som do Juan</div>
+              <div class="som-opt" id="som-ext" onclick="selectSom('ext')">Empresa Externa</div>
+              <div class="som-opt" id="som-nao" onclick="selectSom('nao')">Sem Som</div>
+            </div>
+            <input type="text" id="ev-som-empresa" placeholder="Nome da empresa externa" style="margin-top:8px;display:none">
           </div>
         </div>
-        <div class="form-divider"><span>Equipamento de Som</span></div>
-        <div class="form-group">
-          <div class="som-options">
-            <div class="som-opt" id="som-juan" onclick="selectSom('juan')">Som do Juan</div>
-            <div class="som-opt" id="som-ext" onclick="selectSom('ext')">Empresa Externa</div>
-            <div class="som-opt" id="som-nao" onclick="selectSom('nao')">Sem Som</div>
+        <div class="form-divider"><span>Limpeza</span></div>
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom:0"><label>Data da Limpeza</label><input type="date" id="ev-limpeza-data"></div>
+          <div class="form-group" style="margin-bottom:0"><label>Horario</label><input type="time" id="ev-limpeza-hora"></div>
+        </div>
+        <div class="form-group" style="margin-top:14px">
+          <label>Responsavel pela Limpeza</label>
+          <div class="staff-options">
+            <div class="staff-opt" id="staff-neuraci" onclick="toggleStaff('neuraci',this)">Neuraci</div>
+            <div class="staff-opt" id="staff-jose" onclick="toggleStaff('jose',this)">Jose</div>
+            <div class="staff-opt" id="staff-simone" onclick="toggleStaff('simone',this)">Simone</div>
           </div>
-          <input type="text" id="ev-som-empresa" placeholder="Nome da empresa externa" style="margin-top:8px;display:none">
         </div>
+        <div class="form-divider"><span>Observacoes</span></div>
+        <div class="form-group"><textarea id="ev-obs" placeholder="Decoracao especial, projetor, numero de convidados..."></textarea></div>
       </div>
-      <div class="form-divider"><span>Limpeza</span></div>
-      <div class="form-row">
-        <div class="form-group" style="margin-bottom:0"><label>Data da Limpeza</label><input type="date" id="ev-limpeza-data"></div>
-        <div class="form-group" style="margin-bottom:0"><label>Horario</label><input type="time" id="ev-limpeza-hora"></div>
-      </div>
-      <div class="form-group" style="margin-top:14px">
-        <label>Responsavel pela Limpeza</label>
-        <div class="staff-options">
-          <div class="staff-opt" id="staff-neuraci" onclick="toggleStaff('neuraci',this)">Neuraci</div>
-          <div class="staff-opt" id="staff-jose" onclick="toggleStaff('jose',this)">Jose</div>
-          <div class="staff-opt" id="staff-simone" onclick="toggleStaff('simone',this)">Simone</div>
+
+      <!-- SECAO SO LIMPEZA -->
+      <div id="ev-section-limpeza-only" style="display:none">
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom:0"><label>Data *</label><input type="date" id="ev-data-limp"></div>
+          <div class="form-group" style="margin-bottom:0"><label>Horario *</label><input type="time" id="ev-hora-limp"></div>
         </div>
+        <div class="form-group" style="margin-top:14px">
+          <label>Responsavel pela Limpeza</label>
+          <div class="staff-options">
+            <div class="staff-opt" id="staff-neuraci-l" onclick="toggleStaff('neuraci',this)">Neuraci</div>
+            <div class="staff-opt" id="staff-jose-l" onclick="toggleStaff('jose',this)">Jose</div>
+            <div class="staff-opt" id="staff-simone-l" onclick="toggleStaff('simone',this)">Simone</div>
+          </div>
+        </div>
+        <div class="form-divider"><span>Observacoes</span></div>
+        <div class="form-group"><textarea id="ev-obs-limp" placeholder="Observacoes sobre a limpeza..."></textarea></div>
       </div>
-      <div class="form-divider"><span>Observacoes</span></div>
-      <div class="form-group"><textarea id="ev-obs" placeholder="Decoracao especial, projetor, numero de convidados..."></textarea></div>
     </div>
     <div class="modal-footer">
       <button class="btn-ghost" id="btn-delete-event" onclick="deleteCurrentEvent()" style="display:none;color:#A04A3A;border-color:rgba(160,74,58,0.4)">Excluir</button>
@@ -479,8 +500,8 @@ function selectStatus(s){
   document.getElementById('st-'+s).classList.add('selected');
   document.getElementById('pre-hint').style.display=s==='pre'?'block':'none';
   const isLimpeza=s==='limpeza';
-  document.getElementById('ev-section-nome').style.display=isLimpeza?'none':'block';
-  document.getElementById('ev-section-espacos').style.display=isLimpeza?'none':'block';
+  document.getElementById('ev-section-evento').style.display=isLimpeza?'none':'block';
+  document.getElementById('ev-section-limpeza-only').style.display=isLimpeza?'block':'none';
   if(isLimpeza){clearSpaces();document.querySelectorAll('.som-opt').forEach(el=>el.classList.remove('selected'));selectedSom='nao';}
 }
 function toggleSpace(space,el){
@@ -530,9 +551,11 @@ function openNewEventOnDate(dateStr){
   openNewEvent();document.getElementById('ev-data').value=dateStr;
 }
 function clearForm(){
-  ['ev-nome','ev-cliente','ev-data','ev-inicio','ev-fim','ev-limpeza-data','ev-limpeza-hora','ev-obs','ev-som-empresa'].forEach(id=>document.getElementById(id).value='');
+  ['ev-nome','ev-cliente','ev-data','ev-inicio','ev-fim','ev-limpeza-data','ev-limpeza-hora','ev-obs','ev-som-empresa','ev-data-limp','ev-hora-limp','ev-obs-limp'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('ev-som-empresa').style.display='none';
   document.getElementById('conflict-warning').style.display='none';
+  document.getElementById('ev-section-evento').style.display='block';
+  document.getElementById('ev-section-limpeza-only').style.display='none';
   document.getElementById('ev-section-nome').style.display='block';
   document.getElementById('ev-section-espacos').style.display='block';
   document.getElementById('pre-hint').style.display='none';
@@ -548,20 +571,28 @@ async function saveEvent(){
   const data=document.getElementById('ev-data').value;
   const inicio=document.getElementById('ev-inicio').value;
   const fim=document.getElementById('ev-fim').value;
-  if(!data||!inicio||!fim){alert('Preencha data e horarios.');return;}
-  if(selectedStatus!=='limpeza'&&!selectedSpaces.length&&!nome&&!cliente){alert('Preencha ao menos o nome ou cliente.');return;}
+  const isLimpOnly=selectedStatus==='limpeza';
+  const checkData=isLimpOnly?document.getElementById('ev-data-limp').value:data;
+  const checkInicio=isLimpOnly?document.getElementById('ev-hora-limp').value:inicio;
+  if(!checkData||!checkInicio){alert('Preencha data e horario.');return;}
+  if(!isLimpOnly&&!fim){alert('Preencha o horario de termino.');return;}
+  if(!isLimpOnly&&!selectedSpaces.length&&!nome&&!cliente){alert('Preencha ao menos o nome ou cliente.');return;}
   if(checkConflict(editingEventId)){if(!confirm('Existe conflito de horario. Salvar mesmo assim?'))return;}
+  const isLimpezaOnly=selectedStatus==='limpeza';
   const payload={
-    nome:selectedStatus==='limpeza'?'Limpeza':(nome||null),
-    cliente:cliente||null,data,inicio,fim,
+    nome:isLimpezaOnly?'Limpeza':(nome||null),
+    cliente:isLimpezaOnly?null:(cliente||null),
+    data:isLimpezaOnly?(document.getElementById('ev-data-limp').value||data):data,
+    inicio:isLimpezaOnly?(document.getElementById('ev-hora-limp').value||inicio):inicio,
+    fim:isLimpezaOnly?(document.getElementById('ev-hora-limp').value||fim):fim,
     status:selectedStatus,
-    espacos:selectedStatus==='limpeza'?[]:([...selectedSpaces]),
-    som:selectedStatus==='limpeza'?'nao':selectedSom,
-    som_empresa:document.getElementById('ev-som-empresa').value.trim()||null,
-    limpeza_data:document.getElementById('ev-limpeza-data').value||null,
-    limpeza_hora:document.getElementById('ev-limpeza-hora').value||null,
+    espacos:isLimpezaOnly?[]:([...selectedSpaces]),
+    som:isLimpezaOnly?'nao':selectedSom,
+    som_empresa:isLimpezaOnly?null:(document.getElementById('ev-som-empresa').value.trim()||null),
+    limpeza_data:isLimpezaOnly?(document.getElementById('ev-data-limp').value||null):(document.getElementById('ev-limpeza-data').value||null),
+    limpeza_hora:isLimpezaOnly?(document.getElementById('ev-hora-limp').value||null):(document.getElementById('ev-limpeza-hora').value||null),
     limpeza_staff:[...selectedStaff],
-    obs:document.getElementById('ev-obs').value.trim()||null
+    obs:isLimpezaOnly?(document.getElementById('ev-obs-limp').value.trim()||null):(document.getElementById('ev-obs').value.trim()||null)
   };
   setSyncStatus('syncing');
   const btn=document.getElementById('btn-save-event');btn.textContent='Salvando...';btn.disabled=true;
@@ -620,8 +651,17 @@ function editFromDetail(){
   document.getElementById('ev-limpeza-data').value=fmtD(ev.limpeza_data)||'';
   document.getElementById('ev-limpeza-hora').value=fmtT(ev.limpeza_hora);
   document.getElementById('ev-obs').value=ev.obs||'';
-  setSpaces(ev.espacos||[]);selectSom(ev.som||'nao');
-  if(ev.som_empresa)document.getElementById('ev-som-empresa').value=ev.som_empresa;
+  if(ev.status==='limpeza'){
+    const dlEl=document.getElementById('ev-data-limp');
+    const hlEl=document.getElementById('ev-hora-limp');
+    const olEl=document.getElementById('ev-obs-limp');
+    if(dlEl)dlEl.value=fmtD(ev.limpeza_data)||'';
+    if(hlEl)hlEl.value=fmtT(ev.limpeza_hora);
+    if(olEl)olEl.value=ev.obs||'';
+  } else {
+    setSpaces(ev.espacos||[]);selectSom(ev.som||'nao');
+    if(ev.som_empresa)document.getElementById('ev-som-empresa').value=ev.som_empresa;
+  }
   setStaff(ev.limpeza_staff||[]);
   selectStatus(ev.status||'confirmado');
   document.getElementById('conflict-warning').style.display='none';
